@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Skeleton Viewer</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        @layer base {
+          input[type="number"]::-webkit-inner-spin-button,
+          input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+          }
+          input[type="number"] {
+            -moz-appearance: textfield;
+          }
+          input[type="checkbox"] {
+            position: relative;
+            appearance: none;
+            width: 36px;
+            height: 20px;
+            background-color: #4b5563;
+            border-radius: 9999px;
+            transition: background-color .2s ease-in-out;
+            cursor: pointer;
+          }
+          input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 16px;
+            height: 16px;
+            background-color: white;
+            border-radius: 9999px;
+            transition: transform .2s ease-in-out;
+          }
+          input[type="checkbox"]:checked {
+            background-color: #3b82f6;
+          }
+          input[type="checkbox"]:checked::before {
+            transform: translateX(16px);
+          }
+          .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 300,
+            'GRAD' 0,
+            'opsz' 20
+          }
+        }
+    </style>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    colors: {
+                        'sv-bg': '#111827',
+                        'sv-bg-alt': '#1f2937',
+                        'sv-border': '#374151',
+                        'sv-text': '#d1d5db',
+                        'sv-text-secondary': '#9ca3af',
+                        'sv-primary': '#3b82f6',
+                        'sv-input-bg': '#1f2937',
+                    },
+                },
+            },
+        };
+    </script>
+</head>
+<body class="bg-sv-bg text-sv-text font-sans antialiased">
+<div class="flex h-screen w-full">
+<main class="flex-1 flex flex-col items-center justify-center bg-sv-bg-alt relative">
+<div class="w-full h-full flex items-center justify-center">
+<img alt="A stylized golden letter 'B' with a soft glow, representing a game asset or icon." class="w-48 h-48 object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA187VpTd69eIxRfCUs5sdLGyze8uP_H4swt8JeEYvNL3BsyG18yjWQOU9RsjT-Rl5uB990OzQD7gnovsrnlTzFNX-nG0HA2LsgREFj3BaKATkNF0Sfn3702hiMW0-ia5QEy2VQ8dS5XGSIDoiBJbEzG4YYet8MC33vGZMbvNLzHwbH0-Zgsv9W1gYgZHWsEo8tICZxZvKz9XhmAUfzle4SqX-6atHjZ7BuGqcHKpmGtb8TvCj2NgRIfoN8vCooNWkTMqX7IEsm3wdU"/>
+</div>
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center space-x-4 bg-sv-bg/80 backdrop-blur-sm border border-sv-border rounded-lg px-4 py-2 shadow-lg">
+<button class="text-sv-text-secondary hover:text-sv-text">
+<span class="material-symbols-outlined">skip_previous</span>
+</button>
+<button class="text-sv-text-secondary hover:text-sv-text">
+<span class="material-symbols-outlined">play_arrow</span>
+</button>
+<button class="text-sv-text-secondary hover:text-sv-text">
+<span class="material-symbols-outlined">skip_next</span>
+</button>
+<div class="flex items-center space-x-2">
+<span class="text-xs text-sv-text-secondary">0.00</span>
+<input class="w-48 h-1 bg-sv-border rounded-lg appearance-none cursor-pointer range-sm" type="range" value="0"/>
+<span class="text-xs text-sv-text-secondary">3.53</span>
+</div>
+</div>
+</main>
+<aside class="w-80 bg-sv-bg border-l border-sv-border flex flex-col">
+<header class="p-4 border-b border-sv-border">
+<h1 class="text-lg font-semibold text-white">Skeleton Viewer</h1>
+<p class="text-sm text-sv-text-secondary">Properties Panel</p>
+</header>
+<div class="flex-1 p-4 space-y-6 overflow-y-auto">
+<details class="group" open="">
+<summary class="flex items-center justify-between cursor-pointer list-none">
+<h2 class="text-base font-medium text-white">View Options</h2>
+<span class="material-symbols-outlined text-sv-text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 space-y-4 text-sm">
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="scale">Scale</label>
+<div class="flex items-center w-1/2">
+<input class="w-full text-right bg-sv-input-bg border border-sv-border rounded-md py-1 px-2 focus:ring-2 focus:ring-sv-primary focus:border-sv-primary" id="scale" type="number" value="1.0"/>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="draw-bones">Draw Bones</label>
+<input id="draw-bones" type="checkbox"/>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="draw-bounding-boxes">Draw Bounding Boxes</label>
+<input id="draw-bounding-boxes" type="checkbox"/>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="draw-mesh-triangles">Draw Mesh Triangles</label>
+<input id="draw-mesh-triangles" type="checkbox"/>
+</div>
+</div>
+</details>
+<details class="group" open="">
+<summary class="flex items-center justify-between cursor-pointer list-none">
+<h2 class="text-base font-medium text-white">Animation Controls</h2>
+<span class="material-symbols-outlined text-sv-text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 space-y-4 text-sm">
+<div class="flex flex-col space-y-1">
+<label class="text-sv-text-secondary" for="animation">Animation</label>
+<select class="w-full bg-sv-input-bg border border-sv-border rounded-md py-1.5 px-2 focus:ring-2 focus:ring-sv-primary focus:border-sv-primary" id="animation">
+<option>b_icon</option>
+<option>idle</option>
+<option>walk</option>
+</select>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="loop">Loop</label>
+<input checked="" id="loop" type="checkbox"/>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="time-scale">Time Scale</label>
+<div class="flex items-center w-1/2">
+<input class="w-full text-right bg-sv-input-bg border border-sv-border rounded-md py-1 px-2 focus:ring-2 focus:ring-sv-primary focus:border-sv-primary" id="time-scale" type="number" value="1.0"/>
+</div>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="duration">Duration</label>
+<span class="text-sv-text">3.533s</span>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="events">Events</label>
+<span class="text-sv-text italic">None</span>
+</div>
+</div>
+</details>
+<details class="group" open="">
+<summary class="flex items-center justify-between cursor-pointer list-none">
+<h2 class="text-base font-medium text-white">Skin &amp; Texture</h2>
+<span class="material-symbols-outlined text-sv-text-secondary transition-transform group-open:rotate-180">expand_more</span>
+</summary>
+<div class="mt-4 space-y-4 text-sm">
+<div class="flex flex-col space-y-1">
+<label class="text-sv-text-secondary" for="skin">Skin</label>
+<select class="w-full bg-sv-input-bg border border-sv-border rounded-md py-1.5 px-2 focus:ring-2 focus:ring-sv-primary focus:border-sv-primary" id="skin">
+<option>default</option>
+<option>skin_1</option>
+<option>skin_2</option>
+</select>
+</div>
+<div class="flex items-center justify-between">
+<label class="text-sv-text-secondary" for="premultiplied-alpha">Premultiplied Alpha</label>
+<input id="premultiplied-alpha" type="checkbox"/>
+</div>
+</div>
+</details>
+</div>
+</aside>
+</div>
+
+</body></html>
