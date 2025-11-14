@@ -89,6 +89,11 @@ module.exports = (function () {
                 eventIdCounter: 0,
                 currentEventTime: '--',
                 currentEventName: '--',
+                lastEventShown: null,
+                // Playback control
+                isPlaying: true,
+                currentTime: 0,
+                isDraggingTimeline: false,
             };
         },
 
@@ -588,6 +593,12 @@ module.exports = (function () {
                 this.animationState.setAnimation(0, name, this.loop);
                 this.currentEventName = "";
                 this.currentEventTime = "";
+                this.currentTime = 0;
+                this.activeEvents = [];
+                
+                // Xóa listener cũ trước khi thêm mới
+                this.animationState.clearListeners();
+                
                 // Lắng nghe các event trong animation
                 this.animationState.addListener({
                     event: (trackIndex, event) => {
@@ -597,32 +608,16 @@ module.exports = (function () {
                 });
 
             },
-                        /**
+            /**
              * Hiển thị thông báo event với hiệu ứng bay lên
              * @param {string} name 
              * @param {number} time 
              */
             showEventNotification(name, time) {
-                const eventId = this.eventIdCounter++;
-                const eventObj = {
-                    id: eventId,
-                    name: name,
-                    time: time
-                };
-                this.activeEvents = [];
-                this.activeEvents.push(eventObj);
-                
-                // Cập nhật event name và time vào property
+                // Tắt chức năng hiển thị event bay lên
+                // Chỉ cập nhật vào property panel
                 this.currentEventName = name;
                 this.currentEventTime = time.toFixed(2);
-                
-                // Tự động xóa sau 500ms (khớp với animation duration)
-                setTimeout(() => {
-                    const index = this.activeEvents.findIndex(e => e.id === eventId);
-                    if (index > -1) {
-                        this.activeEvents.splice(index, 1);
-                    }
-                }, 500);
             },
 
             /**
@@ -669,7 +664,30 @@ module.exports = (function () {
                 gl.clear(gl.COLOR_BUFFER_BIT);
 
                 // 应用动画并根据时间差值更新动画时间
-                this.animationState.update(delta);
+                if (this.isPlaying && !this.isDraggingTimeline) {
+                    this.animationState.update(delta);
+                }
+                
+                // Cập nhật currentTime từ animation state
+                if (this.animationState.tracks.length > 0) {
+                    const track = this.animationState.tracks[0];
+                    let trackTime = track.trackTime;
+                    
+                    // Nếu loop, giới hạn trackTime trong khoảng 0 đến duration
+                    if (this.loop && this.duration > 0) {
+                        trackTime = trackTime % this.duration;
+                        this.currentTime = trackTime;
+                    } else {
+                        this.currentTime = trackTime;
+                        
+                        // Nếu không loop và animation đã kết thúc, dừng lại
+                        if (this.currentTime >= this.duration) {
+                            this.currentTime = this.duration;
+                            this.isPlaying = false;
+                        }
+                    }
+                }
+                
                 this.animationState.apply(skeleton);
                 // 更新骨骼 Transform
                 skeleton.updateWorldTransform();
@@ -872,6 +890,66 @@ module.exports = (function () {
             onCanvasMouseLeave(event) {
                 isDragging = false;
                 clickOffset = [0, 0];
+            },
+
+            /**
+             * Toggle play/pause
+             */
+            togglePlayPause() {
+                this.isPlaying = !this.isPlaying;
+                
+                // Nếu animation đã kết thúc và bấm play, restart lại
+                if (this.isPlaying && this.currentTime >= this.duration) {
+                    this.restartAnimation();
+                }
+            },
+
+            /**
+             * Restart animation
+             */
+            restartAnimation() {
+                if (!this.animationState) return;
+                this.currentTime = 0;
+                this.isPlaying = true;
+                this.animationState.setAnimation(0, this.animation, this.loop);
+                if (this.animationState.tracks.length > 0) {
+                    this.animationState.tracks[0].trackTime = 0;
+                }
+            },
+
+            /**
+             * Skip to end
+             */
+            skipToEnd() {
+                if (!this.animationState || !this.duration) return;
+                this.currentTime = this.duration;
+                this.animationState.tracks[0].trackTime = this.duration;
+            },
+
+            /**
+             * Timeline slider change
+             */
+            onTimelineChange(event) {
+                if (!this.animationState || this.animationState.tracks.length === 0) return;
+                const time = parseFloat(event.target.value);
+                this.currentTime = time;
+                this.animationState.tracks[0].trackTime = time;
+                this.animationState.apply(skeleton);
+                skeleton.updateWorldTransform();
+            },
+
+            /**
+             * Timeline slider mouse down
+             */
+            onTimelineMouseDown() {
+                this.isDraggingTimeline = true;
+            },
+
+            /**
+             * Timeline slider mouse up
+             */
+            onTimelineMouseUp() {
+                this.isDraggingTimeline = false;
             },
 
             /**
