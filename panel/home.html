@@ -1,0 +1,1187 @@
+<style>
+/* Reset */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* Container */
+.root-container {
+    background: #101622;
+    color: #e5e7eb;
+    font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main Content */
+.main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    padding: 24px 32px;
+}
+
+/* Grid Layout */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+}
+
+@media (min-width: 1024px) {
+    .content-grid { grid-template-columns: 2fr 1fr; }
+}
+
+/* Left Column */
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Folder Selection */
+.folder-selection {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.folder-label {
+    color: white;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.folder-asset-input {
+    width: 100%;
+    min-height: 40px;
+}
+
+/* Folder Info Display */
+.folder-info {
+    margin-top: 16px;
+    padding: 16px;
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid #2ecc71;
+    border-radius: 8px;
+}
+
+.info-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.info-row:last-child {
+    margin-bottom: 0;
+}
+
+.info-label {
+    color: #86efac;
+    font-weight: 600;
+    min-width: 60px;
+}
+
+.info-value {
+    color: white;
+    word-break: break-all;
+}
+
+
+
+.drop-zone-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    text-align: center;
+}
+
+.drop-zone-icon {
+    font-size: 48px;
+    color: #6b7280;
+}
+
+.drop-zone-title {
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.drop-zone-subtitle {
+    color: #9ca3af;
+    font-size: 14px;
+}
+
+
+
+/* Right Column - Settings */
+.settings-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.1);
+    padding: 24px;
+    border: 1px solid rgba(59, 67, 84, 0.5);
+}
+
+.settings-header {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.settings-title {
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.settings-description {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+}
+
+.form-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #d1d5db;
+}
+
+.input-wrapper { position: relative; }
+
+.form-input {
+    width: 100%;
+    border-radius: 6px;
+    border: 1px solid #374151;
+    background: #1f2937;
+    font-size: 14px;
+    padding: 8px 40px 8px 12px;
+    color: white;
+    outline: none;
+}
+
+.form-input:focus { border-color: #135bec; }
+
+.input-suffix {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: #6b7280;
+}
+
+/* Optimize Button */
+.btn-optimize {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 40px;
+    margin-top: 24px;
+    background: #135bec;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-optimize:hover { background: #0d47b8; }
+
+.btn-devtools {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    height: 36px;
+    margin-top: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: #9ca3af;
+    border: 1px solid #374151;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-devtools:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-color: #4b5563;
+}
+
+/* Filter Tabs */
+.filter-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.filter-header {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+@media (min-width: 768px) {
+    .filter-header {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+    }
+}
+
+.filter-tabs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+}
+
+.filter-tab:hover { background: rgba(55, 65, 81, 0.5); }
+.filter-tab.active {
+    background: rgba(19, 91, 236, 0.2);
+    color: #135bec;
+}
+
+/* Search */
+.search-container {
+    position: relative;
+    margin-left: 8px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #6b7280;
+    font-size: 18px;
+}
+
+.search-input {
+    height: 36px;
+    width: 192px;
+    border-radius: 8px;
+    border: 1px solid #374151;
+    background: #1f2937;
+    padding-left: 40px;
+    font-size: 14px;
+    color: white;
+    outline: none;
+}
+
+.search-input:focus { border-color: #135bec; }
+.search-input::placeholder { color: #6b7280; }
+
+/* Table Container */
+.table-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    margin-top: 8px;
+}
+
+.table-container {
+    overflow: hidden;
+    border-radius: 12px;
+    border: 1px solid #3b4354;
+    background: #111318;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+thead {
+    background: #1c1f27;
+    border-bottom: 1px solid #3b4354;
+}
+
+th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6b7280;
+}
+
+tbody tr { border-top: 1px solid #3b4354; }
+td {
+    padding: 16px;
+    font-size: 14px;
+}
+
+.file-name { color: white; }
+.file-type, .file-size { color: #9da6b9; }
+
+/* Progress Cell */
+.progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.progress-bar-bg {
+    width: 100%;
+    background: #374151;
+    border-radius: 9999px;
+    height: 6px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.3s;
+}
+
+.progress-bar.success { background: #2ecc71; }
+.progress-bar.primary { background: #135bec; }
+.progress-bar.warning { background: #f39c12; }
+.progress-bar.error { background: #e74c3c; }
+
+.status-icon { font-size: 20px; }
+.status-icon.success { color: #2ecc71; }
+.status-icon.primary { color: #135bec; }
+.status-icon.error { color: #e74c3c; }
+.status-icon.pending { color: #6b7280; }
+.status-icon.spin { animation: spin 2s linear infinite; }
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid #4b5563;
+    background: #374151;
+    cursor: pointer;
+    accent-color: #135bec;
+}
+
+/* Footer */
+.footer {
+    position: sticky;
+    bottom: 0;
+    background: #111318;
+    border-top: 1px solid #1f2937;
+    padding: 16px;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.footer.hidden {
+    transform: translateY(100%);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.overall-progress {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.progress-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: #d1d5db;
+    width: 192px;
+    flex-shrink: 0;
+}
+
+.progress-bar-large {
+    width: 100%;
+    background: #374151;
+    border-radius: 9999px;
+    height: 8px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: #135bec;
+    border-radius: 9999px;
+    transition: width 0.3s;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-top: 12px;
+    border-top: 1px solid #1f2937;
+}
+
+@media (min-width: 768px) {
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (min-width: 1024px) {
+    .stats-grid { grid-template-columns: repeat(5, 1fr); }
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+}
+
+.stat-value.success {
+    color: #2ecc71;
+    font-weight: bold;
+}
+
+/* Size Info Modal */
+.size-info-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.size-info-overlay.show {
+    display: flex;
+}
+
+.size-info-modal {
+    background: #1a1d26;
+    border-radius: 16px;
+    border: 1px solid #3b4354;
+    width: 90%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+
+.size-info-header {
+    padding: 24px;
+    border-bottom: 1px solid #3b4354;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.size-info-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.size-info-close {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.size-info-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.size-info-body {
+    padding: 24px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.size-info-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.size-info-table thead {
+    background: rgba(255, 255, 255, 0.05);
+    position: sticky;
+    top: 0;
+}
+
+.size-info-table th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #9ca3af;
+    border-bottom: 1px solid #3b4354;
+}
+
+.sort-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: #9ca3af;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.sort-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.sort-btn.active {
+    background: #135bec;
+    color: white;
+}
+
+.sort-btn.desc::after {
+    content: '↓';
+    position: absolute;
+    font-size: 10px;
+    margin-top: -2px;
+}
+
+.sort-btn.asc::after {
+    content: '↑';
+    position: absolute;
+    font-size: 10px;
+    margin-top: -2px;
+}
+
+.size-info-table td {
+    padding: 16px;
+    border-bottom: 1px solid rgba(59, 67, 84, 0.3);
+    color: #e5e7eb;
+}
+
+.size-info-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.size-type {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+}
+
+.size-bar-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.size-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.size-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #135bec, #1e88e5);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.size-percent {
+    min-width: 50px;
+    text-align: right;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.size-value {
+    font-weight: 600;
+    color: white;
+}
+
+.size-value.optimized {
+    color: #2ecc71;
+}
+
+.size-summary {
+    margin-top: 24px;
+    padding: 20px;
+    background: rgba(19, 91, 236, 0.1);
+    border: 1px solid rgba(19, 91, 236, 0.3);
+    border-radius: 12px;
+}
+
+.size-summary-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: #9ca3af;
+    margin-bottom: 12px;
+}
+
+.size-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.size-summary-item {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.size-summary-label {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.size-summary-value {
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+}
+
+.size-summary-value.success {
+    color: #2ecc71;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .main-content { padding: 16px; }
+    .table-col-type, .table-col-new-size { display: none; }
+    
+    .size-info-modal {
+        width: 95%;
+        max-height: 90vh;
+    }
+    
+    .size-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<div class="root-container">
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Grid -->
+        <div class="content-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Folder Selection -->
+                <div class="folder-selection">
+                    <label class="folder-label">📁 Select Folder to Optimize:</label>
+                    <ui-asset id="folderAsset" class="folder-asset-input" type="folder" droppable="asset"></ui-asset>
+                </div>
+
+                <!-- Folder Info Display -->
+                <div class="folder-info" id="folderInfo" style="display: none;">
+                    <div class="info-row">
+                        <span class="info-label">Path:</span>
+                        <span class="info-value" id="folderPath">-</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">URL:</span>
+                        <span class="info-value" id="folderUrl">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Settings -->
+            <div class="settings-panel">
+                <div class="settings-header">
+                    <p class="settings-title">Optimization Settings</p>
+                    <p class="settings-description">Adjust the compression settings.</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="compressionLevel">Compression Level (0-100)</label>
+                    <div class="input-wrapper">
+                        <input type="number" class="form-input" id="compressionLevel" value="75" min="0" max="100" step="1" />
+                        <span class="input-suffix">%</span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="autoScrollCheckbox" style="margin: 0;" />
+                        <span class="form-label" style="margin: 0; cursor: pointer;">Auto-scroll to current asset</span>
+                    </label>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox" id="showLogsCheckbox" style="margin: 0;" />
+                        <span class="form-label" style="margin: 0; cursor: pointer;">Show debug logs</span>
+                    </label>
+                </div>
+
+                <button class="btn-optimize" id="optimizeBtn">
+                    <span>⚡</span>
+                    <span>Start Optimization</span>
+                </button>
+                
+                <button class="btn-devtools" id="sizeInfoBtn">
+                    <span>📊</span>
+                    <span>Size Info</span>
+                </button>
+                
+                <button class="btn-devtools" id="testSharpBtn">
+                    <span>🧪</span>
+                    <span>Test Sharp</span>
+                </button>
+                
+                <button class="btn-devtools" id="devToolsBtn">
+                    <span>🔧</span>
+                    <span>DevTools</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <div class="filter-header">
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="all">All</button>
+                    <button class="filter-tab" data-filter="images">Images</button>
+                    <button class="filter-tab" data-filter="audio">Audio</button>
+                    <button class="filter-tab" data-filter="videos">Videos</button>
+                </div>
+
+                <!-- Search -->
+                <div class="search-container">
+                    <span class="search-icon">🔍</span>
+                    <input type="search" class="search-input" placeholder="Search assets..." />
+                </div>
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrapper">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;"><input type="checkbox" id="selectAllCheckbox" /></th>
+                                <th style="width: 40%;">File Name</th>
+                                <th class="table-col-type">Type</th>
+                                <th>Original Size</th>
+                                <th class="table-col-new-size">New Size</th>
+                                <th style="width: 20%;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetTableBody">
+                            <tr>
+                                <td colspan="6" style="text-align: center; padding: 40px; color: #6b7280;">
+                                    Select a folder to view assets
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer hidden" id="statsFooter">
+        <div class="footer-content">
+            <!-- Overall Progress -->
+            <div class="overall-progress">
+                <p class="progress-label">Overall Progress (75%)</p>
+                <div class="progress-bar-large">
+                    <div class="progress-fill" style="width: 75%"></div>
+                </div>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">Total Assets</span>
+                    <span class="stat-value">34</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Selected</span>
+                    <span class="stat-value">28</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Size Before</span>
+                    <span class="stat-value">134.1 MB</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Size After</span>
+                    <span class="stat-value">26.3 MB</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Savings</span>
+                    <span class="stat-value success">80% (107.8 MB)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Size Info Modal -->
+<div class="size-info-overlay" id="sizeInfoOverlay">
+    <div class="size-info-modal">
+        <div class="size-info-header">
+            <div class="size-info-title">
+                <span>📊</span>
+                <span>Size Analysis by File Type</span>
+            </div>
+            <button class="size-info-close" id="sizeInfoClose">×</button>
+        </div>
+        <div class="size-info-body">
+            <table class="size-info-table">
+                <thead>
+                    <tr>
+                        <th>File Type</th>
+                        <th>Count</th>
+                        <th>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span>Size Before</span>
+                                <button class="sort-btn" id="sortSizeBefore" title="Sort by Size Before">⇅</button>
+                            </div>
+                        </th>
+                        <th>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span>Size After</span>
+                                <button class="sort-btn" id="sortSizeAfter" title="Sort by Size After">⇅</button>
+                            </div>
+                        </th>
+                        <th>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <span>Distribution</span>
+                                <button class="sort-btn" id="sortDistribution" title="Sort by Distribution">⇅</button>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody id="sizeInfoTableBody">
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 40px; color: #6b7280;">
+                            Select a folder to view size analysis
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="size-summary" id="sizeSummary" style="display: none;">
+                <div class="size-summary-title">Summary</div>
+                <div class="size-summary-grid">
+                    <div class="size-summary-item">
+                        <span class="size-summary-label">Total Files</span>
+                        <span class="size-summary-value" id="summaryTotalFiles">0</span>
+                    </div>
+                    <div class="size-summary-item">
+                        <span class="size-summary-label">Total Size Before</span>
+                        <span class="size-summary-value" id="summaryTotalBefore">0 MB</span>
+                    </div>
+                    <div class="size-summary-item">
+                        <span class="size-summary-label">Total Size After</span>
+                        <span class="size-summary-value success" id="summaryTotalAfter">0 MB</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+Editor.log('[Tool-Optimize] ========== SCRIPT STARTED ==========');
+
+(function() {
+    Editor.log('[Tool-Optimize] IIFE started');
+    
+    // Wait for DOM to be ready
+    function init() {
+        Editor.log('[Tool-Optimize] === init() function called ===');
+        
+        // Get elements
+        const folderAsset = document.getElementById('folderAsset');
+        const folderInfo = document.getElementById('folderInfo');
+        const folderPath = document.getElementById('folderPath');
+        const folderUrl = document.getElementById('folderUrl');
+        
+        Editor.log('[Tool-Optimize] folderAsset element:', folderAsset);
+        Editor.log('[Tool-Optimize] folderInfo element:', folderInfo);
+        
+        if (folderAsset) {
+            Editor.log('[Tool-Optimize] folderAsset attributes:');
+            Editor.log('[Tool-Optimize]   - type:', folderAsset.getAttribute('type'));
+            Editor.log('[Tool-Optimize]   - droppable:', folderAsset.getAttribute('droppable'));
+            Editor.log('[Tool-Optimize]   - value:', folderAsset.value);
+        }
+        
+        if (!folderAsset) {
+            Editor.error('[Tool-Optimize] Folder asset element not found!');
+            return;
+        }
+        
+        // Store selected folder info
+        let selectedFolder = null;
+        
+        // Listen to folder asset change
+        folderAsset.addEventListener('change', (e) => {
+            Editor.log('[Tool-Optimize] ========================================');
+            Editor.log('[Tool-Optimize] === FOLDER ASSET CHANGED ===');
+            Editor.log('[Tool-Optimize] Event:', e);
+            Editor.log('[Tool-Optimize] Value (UUID):', folderAsset.value);
+            Editor.log('[Tool-Optimize] ========================================');
+            
+            if (folderAsset.value) {
+                // Get asset info by UUID
+                Editor.assetdb.queryInfoByUuid(folderAsset.value, (err, info) => {
+                    if (err) {
+                        Editor.error('[Tool-Optimize] Error querying asset info:', err);
+                        return;
+                    }
+                    
+                    Editor.log('[Tool-Optimize] ========================================');
+                    Editor.log('[Tool-Optimize] ✓✓✓ FOLDER DROPPED SUCCESSFULLY! ✓✓✓');
+                    Editor.log('[Tool-Optimize] ========================================');
+                    Editor.log('[Tool-Optimize] UUID:', info.uuid);
+                    Editor.log('[Tool-Optimize] URL:', info.url);
+                    Editor.log('[Tool-Optimize] Path:', info.path);
+                    Editor.log('[Tool-Optimize] Type:', info.type);
+                    Editor.log('[Tool-Optimize] Name:', info.name);
+                    Editor.log('[Tool-Optimize] ========================================');
+                    
+                    // Store folder info
+                    selectedFolder = info;
+                    
+                    // Update folder info display
+                    if (folderInfo) {
+                        folderInfo.style.display = 'block';
+                    }
+                    if (folderPath) {
+                        folderPath.textContent = info.path;
+                    }
+                    if (folderUrl) {
+                        folderUrl.textContent = info.url;
+                    }
+                    
+                    Editor.log('[Tool-Optimize] ✓ Updated folder info display');
+                    
+                    Editor.log('[Tool-Optimize] ========================================');
+                    Editor.log('[Tool-Optimize] Ready to optimize!');
+                    Editor.log('[Tool-Optimize] ========================================');
+                });
+            } else {
+                Editor.warn('[Tool-Optimize] No value in folderAsset!');
+            }
+        });
+        
+        // Also listen to confirm event (alternative event)
+        folderAsset.addEventListener('confirm', (e) => {
+            Editor.log('[Tool-Optimize] === FOLDER ASSET CONFIRMED ===');
+            Editor.log('[Tool-Optimize] Confirm event:', e);
+        });
+        
+        // Listen to drag events for user feedback
+        Editor.log('[Tool-Optimize] Adding drag event listeners to folderAsset...');
+        
+        folderAsset.addEventListener('dragenter', (e) => {
+            Editor.log('[Tool-Optimize] 🎯 User is dragging something into the drop zone...');
+        });
+        Editor.log('[Tool-Optimize] ✓ Added dragenter listener');
+        
+        folderAsset.addEventListener('dragover', (e) => {
+            // Don't log too much, just once
+        });
+        Editor.log('[Tool-Optimize] ✓ Added dragover listener');
+        
+        folderAsset.addEventListener('dragleave', (e) => {
+            Editor.log('[Tool-Optimize] ❌ User dragged away from drop zone');
+        });
+        Editor.log('[Tool-Optimize] ✓ Added dragleave listener');
+        
+        folderAsset.addEventListener('drop', (e) => {
+            Editor.log('[Tool-Optimize] 📦 User dropped something!');
+        });
+        Editor.log('[Tool-Optimize] ✓ Added drop listener');
+        
+        Editor.log('[Tool-Optimize] All drag event listeners added successfully!');
+
+    
+    // Get extension window for DevTools
+    let extensionWindow = null;
+    try {
+        const electron = require('electron');
+        const browserWindow = electron.remote.BrowserWindow;
+        const thisWindow = browserWindow.getFocusedWindow();
+        extensionWindow = Editor.remote.Window.find(thisWindow);
+        Editor.log('[Tool-Optimize] Extension window:', extensionWindow);
+    } catch (err) {
+        Editor.error('[Tool-Optimize] Error getting extension window:', err);
+    }
+    
+    // DevTools button
+    const devToolsBtn = document.getElementById('devToolsBtn');
+    Editor.log('[Tool-Optimize] DevTools button element:', devToolsBtn);
+    
+    if (devToolsBtn) {
+        devToolsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            Editor.log('[Tool-Optimize] DevTools button clicked!');
+            
+            if (!extensionWindow) {
+                Editor.log('[Tool-Optimize] Trying to get extension window again...');
+                try {
+                    const electron = require('electron');
+                    const browserWindow = electron.remote.BrowserWindow;
+                    const thisWindow = browserWindow.getFocusedWindow();
+                    extensionWindow = Editor.remote.Window.find(thisWindow);
+                    Editor.log('[Tool-Optimize] Extension window found:', extensionWindow);
+                } catch (err) {
+                    Editor.error('[Tool-Optimize] Error:', err);
+                }
+            }
+            
+            if (extensionWindow) {
+                Editor.log('[Tool-Optimize] Opening DevTools...');
+                extensionWindow.openDevTools();
+                Editor.log('[Tool-Optimize] DevTools opened!');
+            } else {
+                Editor.error('[Tool-Optimize] Extension window not found!');
+            }
+        });
+    } else {
+        Editor.error('[Tool-Optimize] DevTools button not found in DOM!');
+    }
+    
+    // Filter tabs
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    filterTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            filterTabs.forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            
+            const filter = tab.dataset.filter;
+            console.log('Filter changed to:', filter);
+        });
+    });
+    
+    // Optimize button
+    const optimizeBtn = document.getElementById('optimizeBtn');
+    if (optimizeBtn) {
+        optimizeBtn.addEventListener('click', () => {
+            console.log('=== OPTIMIZE BUTTON CLICKED ===');
+            
+            if (!selectedFolder) {
+                console.warn('No folder selected!');
+                Editor.Dialog.messageBox({
+                    type: 'warning',
+                    buttons: ['OK'],
+                    title: 'Warning',
+                    message: 'Please select a folder first!',
+                    defaultId: 0
+                });
+                return;
+            }
+            
+            console.log('Starting optimization for:');
+            console.log('  Path:', selectedFolder.path);
+            console.log('  URL:', selectedFolder.url);
+            console.log('  UUID:', selectedFolder.uuid);
+            
+            // TODO: Start optimization process
+        });
+    }
+    
+    Editor.log('[Tool-Optimize] === Panel Ready - Waiting for drag & drop ===');
+    Editor.log('[Tool-Optimize] DevTools button:', devToolsBtn);
+    }
+    
+    // Try to initialize immediately
+    Editor.log('[Tool-Optimize] document.readyState:', document.readyState);
+    
+    if (document.readyState === 'loading') {
+        Editor.log('[Tool-Optimize] Waiting for DOMContentLoaded...');
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        // DOM already loaded
+        Editor.log('[Tool-Optimize] DOM already loaded, calling init()...');
+        init();
+    }
+    
+    Editor.log('[Tool-Optimize] ========== SCRIPT ENDED ==========');
+})();
+</script>

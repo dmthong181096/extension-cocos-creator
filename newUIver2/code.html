@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Asset Optimizer Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#135bec",
+              "background-light": "#f6f6f8",
+              "background-dark": "#101622",
+              "success": "#2ECC71",
+              "warning": "#F39C12",
+              "error": "#E74C3C"
+            },
+            fontFamily: {
+              "display": ["Manrope"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings:
+            'FILL' 0,
+            'wght' 400,
+            'GRAD' 0,
+            'opsz' 24
+        }
+        .material-symbols-outlined.fill {
+            font-variation-settings: 'FILL' 1;
+        }
+        @keyframes spin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+        .animate-spin-slow {
+          animation: spin 2s linear infinite;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-200">
+<div class="flex h-screen flex-col">
+<main class="flex-1 flex flex-col overflow-y-auto p-6 lg:p-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<div class="lg:col-span-2 flex flex-col h-full gap-4">
+<div class="flex flex-col flex-1 items-center justify-center gap-6 rounded-xl border-2 border-dashed border-gray-300 dark:border-gray-700/50 px-6 py-12 bg-white dark:bg-gray-900/20">
+<div class="flex flex-col items-center gap-2 text-center">
+<span class="material-symbols-outlined text-5xl text-gray-400 dark:text-gray-500">upload_file</span>
+<p class="text-gray-900 dark:text-white text-lg font-bold leading-tight tracking-[-0.015em]">Drop a folder here to start optimizing</p>
+<p class="text-gray-600 dark:text-gray-400 text-sm font-normal leading-normal">Or drag and drop a folder anywhere on the page</p>
+</div>
+</div>
+<div class="relative">
+<input class="w-full text-sm bg-gray-100 dark:bg-gray-900/30 border border-gray-200 dark:border-gray-800 rounded-lg pl-10 pr-4 py-2 focus:ring-primary focus:border-primary text-gray-600 dark:text-gray-400" id="folder-path" readonly="" type="text" value="/Users/username/Projects/Website/assets/"/>
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 text-base">folder</span>
+</div>
+</div>
+<div class="lg:col-span-1 flex flex-col gap-4 rounded-xl bg-gray-50 dark:bg-black/10 p-6 border border-gray-200 dark:border-gray-800/50">
+<div class="flex flex-col">
+<p class="text-base font-bold text-gray-900 dark:text-white">Optimization Settings</p>
+<p class="text-sm text-gray-500 dark:text-gray-400">Adjust the compression settings.</p>
+</div>
+<div class="flex flex-col gap-1.5 mt-2">
+<label class="text-sm font-medium text-gray-600 dark:text-gray-300" for="compression-level">Compression Level</label>
+<div class="relative">
+<input class="w-full rounded-md border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-sm pl-3 pr-8 focus:border-primary focus:ring-primary" id="compression-level" step="0.1" type="number" value="75.0"/>
+<span class="absolute inset-y-0 right-3 flex items-center text-sm text-gray-400 dark:text-gray-500">%</span>
+</div>
+</div>
+<button class="flex mt-6 w-full min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-lg h-10 px-5 bg-primary text-white text-sm font-bold leading-normal tracking-[0.015em] gap-2">
+<span class="material-symbols-outlined text-base">bolt</span>
+<span class="truncate">Optimize All Files</span>
+</button>
+</div>
+</div>
+<div class="flex-1 flex flex-col gap-4 mt-6">
+<div class="flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 p-1 flex-wrap">
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg bg-primary/10 dark:bg-primary/20 px-4 text-primary">
+<p class="text-sm font-medium leading-normal">All (34)</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg px-4 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50">
+<p class="text-sm font-medium leading-normal">Images (15)</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg px-4 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50">
+<p class="text-sm font-medium leading-normal">Audio (10)</p>
+</button>
+<button class="flex h-9 shrink-0 items-center justify-center gap-x-2 rounded-lg px-4 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800/50">
+<p class="text-sm font-medium leading-normal">Videos (9)</p>
+</button>
+</div>
+<div class="relative ml-2">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">search</span>
+<input class="h-9 w-48 rounded-lg border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 pl-10 text-sm focus:border-primary focus:ring-primary" placeholder="Search assets..." type="search"/>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto mt-2">
+<div class="px-0 py-3 @container">
+<div class="flex overflow-hidden rounded-xl border border-gray-200 dark:border-[#3b4354] bg-white dark:bg-[#111318]">
+<table class="w-full">
+<thead class="border-b border-gray-200 dark:border-[#3b4354]">
+<tr class="bg-gray-50 dark:bg-[#1c1f27]">
+<th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 w-10"><input class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></th>
+<th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 w-2/5">File Name</th>
+<th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Type</th>
+<th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">Original Size</th>
+<th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400">New Size</th>
+<th class="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500 dark:text-gray-400 w-1/5">Status</th>
+</tr>
+</thead>
+<tbody>
+<tr class="border-t border-gray-200 dark:border-t-[#3b4354]">
+<td class="h-[72px] px-4 py-2"><input checked="" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-gray-900 dark:text-white">Product_Shot_01.jpg</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">Image</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">5.2 MB</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">1.1 MB</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex items-center gap-3">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+<div class="bg-success h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+<span class="material-symbols-outlined text-success text-xl">check_circle</span>
+</div>
+</td>
+</tr>
+<tr class="border-t border-gray-200 dark:border-t-[#3b4354]">
+<td class="h-[72px] px-4 py-2"><input checked="" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-gray-900 dark:text-white">Onboarding_Audio.mp3</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">Audio</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">12.8 MB</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">3.4 MB</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex items-center gap-3">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+<div class="bg-success h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+<span class="material-symbols-outlined text-success text-xl">check_circle</span>
+</div>
+</td>
+</tr>
+<tr class="border-t border-gray-200 dark:border-t-[#3b4354]">
+<td class="h-[72px] px-4 py-2"><input checked="" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-gray-900 dark:text-white">Promo_Video_Final.mp4</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">Video</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">87.3 MB</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">21.8 MB</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex items-center gap-3">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+<div class="bg-primary h-1.5 rounded-full" style="width: 75%"></div>
+</div>
+<span class="material-symbols-outlined text-primary text-xl animate-spin-slow">progress_activity</span>
+</div>
+</td>
+</tr>
+<tr class="border-t border-gray-200 dark:border-t-[#3b4354]">
+<td class="h-[72px] px-4 py-2"><input checked="" class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-gray-900 dark:text-white">UI_Icon_Set.svg</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">Image</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">0.8 MB</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">...</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex items-center gap-3">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+<div class="bg-warning h-1.5 rounded-full" style="width: 25%"></div>
+</div>
+<span class="material-symbols-outlined text-primary text-xl animate-spin-slow">progress_activity</span>
+</div>
+</td>
+</tr>
+<tr class="border-t border-gray-200 dark:border-t-[#3b4354]">
+<td class="h-[72px] px-4 py-2"><input class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-gray-900 dark:text-white">Background_Track.wav</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">Audio</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">25.1 MB</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">...</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex items-center gap-3">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+<div class="h-1.5 rounded-full" style="width: 0%"></div>
+</div>
+<span class="material-symbols-outlined text-gray-400 dark:text-gray-500 text-xl">schedule</span>
+</div>
+</td>
+</tr>
+<tr class="border-t border-gray-200 dark:border-t-[#3b4354]">
+<td class="h-[72px] px-4 py-2"><input class="h-4 w-4 rounded border-gray-300 text-primary focus:ring-primary dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800" type="checkbox"/></td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-gray-900 dark:text-white">User_Avatar.png</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">Image</td>
+<td class="h-[72px] px-4 py-2 text-gray-500 dark:text-[#9da6b9] text-sm font-normal leading-normal">2.1 MB</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal text-error">Failed</td>
+<td class="h-[72px] px-4 py-2 text-sm font-normal leading-normal">
+<div class="flex items-center gap-3">
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+<div class="bg-error h-1.5 rounded-full" style="width: 100%"></div>
+</div>
+<span class="material-symbols-outlined text-error text-xl">error</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-white dark:bg-[#111318] border-t border-gray-200 dark:border-gray-800 p-4">
+<div class="space-y-3">
+<div class="flex items-center gap-4">
+<p class="text-sm font-medium text-gray-700 dark:text-gray-300 w-48 shrink-0">Overall Progress (75%)</p>
+<div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
+<div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 pt-3 border-t border-gray-200 dark:border-gray-800">
+<div class="flex flex-col gap-0.5">
+<span class="text-xs text-gray-500 dark:text-gray-400">Total Assets</span>
+<span class="text-sm font-semibold text-gray-800 dark:text-white">34</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="text-xs text-gray-500 dark:text-gray-400">Selected</span>
+<span class="text-sm font-semibold text-gray-800 dark:text-white">28</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="text-xs text-gray-500 dark:text-gray-400">Size Before</span>
+<span class="text-sm font-semibold text-gray-800 dark:text-white">134.1 MB</span>
+</div>
+<div class="flex flex-col gap-0.5">
+<span class="text-xs text-gray-500 dark:text-gray-400">Size After</span>
+<span class="text-sm font-semibold text-gray-800 dark:text-white">26.3 MB</span>
+</div>
+<div class="flex flex-col gap-0.5 text-right md:text-left">
+<span class="text-xs text-gray-500 dark:text-gray-400">Savings</span>
+<span class="text-sm font-bold text-success">80% (107.8 MB)</span>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>
