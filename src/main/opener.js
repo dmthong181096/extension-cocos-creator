@@ -90,12 +90,14 @@ const Opener = {
      * @param {string[]} uuids 
      */
     async identifyByUuids(uuids) {
+        console.log('[SKELETON-VIEWER-DEBUG] identifyByUuids called with uuids:', uuids);
         // 资源路径
         let skeletonPath, texturePath, atlasPath;
         // 遍历选中的资源 uuid
         for (let i = 0; i < uuids.length; i++) {
-            const assetInfo = await EditorAdapter.getAssetInfoByUuid(uuids[0]),
+            const assetInfo = await EditorAdapter.getAssetInfoByUuid(uuids[i]),
                 { type, file } = assetInfo;
+            console.log('[DEBUG] Asset info for uuid', uuids[i], ':', { type, file });
             if (type === 'sp.SkeletonData') {
                 skeletonPath = file;   // 骨骼资源
             } else if (type === 'cc.ImageAsset') {
@@ -108,6 +110,7 @@ const Opener = {
                 break;
             }
         }
+        console.log('[DEBUG] Final paths - skeleton:', skeletonPath, 'texture:', texturePath, 'atlas:', atlasPath);
         // 未选中骨骼资源
         // if (!skeletonPath) {
         //     return;
@@ -176,8 +179,10 @@ const Opener = {
      * @param {{ skeletonPath: string, texturePath: string, atlasPath: string }} paths 资源路径
      */
     collectAssets(paths) {
+        console.log('[DEBUG] collectAssets called with paths:', paths);
         let { skeletonPath, texturePath, atlasPath } = paths;
         const testPath = skeletonPath || texturePath || atlasPath;
+        console.log('[DEBUG] testPath:', testPath);
         // 骨骼资源
         if (!skeletonPath) {
             // 暴力查找
@@ -192,33 +197,74 @@ const Opener = {
                 return null;
             }
         }
-        // 纹理资源
-        if (!texturePath) {
-            // 暴力查找
-            texturePath = Opener.getRelatedFile(testPath, 'png');
-            // 找不到纹理啊
-            if (!texturePath) {
-                print('warn', translate('noTexture'));
-                return null;
-            }
-        }
         // 图集资源
         if (!atlasPath) {
+            console.log('[DEBUG] Looking for atlas file...');
             // 暴力查找
             atlasPath = Opener.getRelatedFile(testPath, 'atlas');
+            console.log('[DEBUG] Atlas search result (.atlas):', atlasPath);
             // 还没有的话再试试 txt 格式
             if (!atlasPath) {
                 atlasPath = Opener.getRelatedFile(testPath, 'txt');
+                console.log('[DEBUG] Atlas search result (.txt):', atlasPath);
             }
             // 还没有的话再试试 atlas.txt 格式
             if (!atlasPath) {
                 atlasPath = Opener.getRelatedFile(testPath, 'atlas.txt');
+                console.log('[DEBUG] Atlas search result (.atlas.txt):', atlasPath);
             }
             // 找不到图集啊
             if (!atlasPath) {
+                console.log('[DEBUG] No atlas file found');
                 print('warn', translate('noAtlas'));
                 return null;
             }
+        }
+        // 纹理资源 - 优先从atlas文件中读取texture文件名
+        let textureFiles = [];
+        console.log('[DEBUG] collectAssets - texturePath:', texturePath, 'atlasPath:', atlasPath);
+        if (!texturePath) {
+            // 尝试从atlas文件中解析texture文件名
+            const texturesFromAtlas = Opener.getTexturesFromAtlas(atlasPath);
+            console.log('[DEBUG] texturesFromAtlas:', texturesFromAtlas);
+            if (texturesFromAtlas && texturesFromAtlas.length > 0) {
+                // 查找所有存在的texture文件
+                const dirPath = Path.dirname(atlasPath);
+                console.log('[DEBUG] Looking for textures in directory:', dirPath);
+                for (let textureName of texturesFromAtlas) {
+                    const fullTexturePath = Path.join(dirPath, textureName);
+                    console.log('[DEBUG] Checking texture path:', fullTexturePath);
+                    if (Fs.existsSync(fullTexturePath)) {
+                        textureFiles.push(fullTexturePath);
+                        console.log('[DEBUG] Found existing texture:', fullTexturePath);
+                    } else {
+                        console.log('[DEBUG] Texture file not found:', fullTexturePath);
+                    }
+                }
+                // 设置第一个找到的作为主texture
+                if (textureFiles.length > 0) {
+                    texturePath = textureFiles[0];
+                    console.log('[DEBUG] Set main texture to:', texturePath);
+                }
+            }
+            // 如果atlas中没找到，则使用原来的暴力查找方法
+            if (!texturePath) {
+                console.log('[DEBUG] Falling back to getRelatedFile method');
+                texturePath = Opener.getRelatedFile(testPath, 'png');
+                if (texturePath) {
+                    textureFiles = [texturePath];
+                    console.log('[DEBUG] Found texture via getRelatedFile:', texturePath);
+                }
+            }
+            // 找不到纹理啊
+            if (!texturePath) {
+                console.log('[DEBUG] No texture found, returning null');
+                print('warn', translate('noTexture'));
+                return null;
+            }
+        } else {
+            textureFiles = [texturePath];
+            console.log('[DEBUG] Using provided texture path:', texturePath);
         }
         // 文件类型（json 或 skel）
         const skeletonType = Path.extname(skeletonPath);
@@ -230,8 +276,10 @@ const Opener = {
             json: (skeletonType === '.json') ? skeletonPath : undefined,
             // 骨骼数据（二进制）
             skel: (skeletonType === '.skel') ? skeletonPath : undefined,
-            // 纹理
+            // 纹理 (主纹理，向后兼容)
             png: texturePath,
+            // 所有纹理文件
+            textures: textureFiles,
             // 图集
             atlas: atlasPath,
         };
@@ -254,12 +302,61 @@ const Opener = {
                 `${basePath}-pro.${relatedExt}`,
                 `${basePath}-ess.${relatedExt}`
             ];
+        console.log('[DEBUG] getRelatedFile - looking for', relatedExt, 'files in:', dirPath);
+        console.log('[DEBUG] basename:', basename, 'testList:', testList);
         for (let i = 0; i < testList.length; i++) {
+            console.log('[DEBUG] Checking file existence:', testList[i]);
             if (Fs.existsSync(testList[i])) {
+                console.log('[DEBUG] Found file:', testList[i]);
                 return testList[i];
             }
         }
+        console.log('[DEBUG] No related file found for extension:', relatedExt);
         return null;
+    },
+
+    /**
+     * 从atlas文件中解析texture文件名
+     * @param {string} atlasPath atlas文件路径
+     * @returns {string[]} texture文件名数组
+     */
+    getTexturesFromAtlas(atlasPath) {
+        console.log('[DEBUG] getTexturesFromAtlas called with:', atlasPath);
+        if (!atlasPath || !Fs.existsSync(atlasPath)) {
+            console.log('[DEBUG] Atlas file not found or path is null');
+            return [];
+        }
+        
+        try {
+            const atlasContent = Fs.readFileSync(atlasPath, 'utf8');
+            const lines = atlasContent.split('\n');
+            const textureFiles = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                // 跳过空行和注释
+                if (!line || line.startsWith('#')) {
+                    continue;
+                }
+                
+                // 检查是否是texture文件名（通常以.png结尾且不包含冒号）
+                if (line.endsWith('.png') && !line.includes(':')) {
+                    textureFiles.push(line);
+                    console.log('[DEBUG] Found texture file:', line);
+                }
+                // 也支持其他图片格式
+                else if ((line.endsWith('.jpg') || line.endsWith('.jpeg') || line.endsWith('.webp')) && !line.includes(':')) {
+                    textureFiles.push(line);
+                    console.log('[DEBUG] Found texture file:', line);
+                }
+            }
+            
+            console.log('[DEBUG] Total texture files found:', textureFiles);
+            return textureFiles;
+        } catch (error) {
+            console.error('Error reading atlas file:', error);
+            return [];
+        }
     },
 
     /**

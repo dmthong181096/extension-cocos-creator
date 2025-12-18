@@ -164,7 +164,7 @@ module.exports = (function () {
                     return `💡 ${translate('noAssets')}`;
                 };
                 let skeletonPath = '',
-                    texturePath = '',
+                    texturePaths = [],
                     atlasPath = '';
                 for (const path in this.assetManager.assets) {
                     switch (Path.extname(path)) {
@@ -173,8 +173,11 @@ module.exports = (function () {
                             skeletonPath = path;
                             break;
                         }
-                        case '.png': {
-                            texturePath = path;
+                        case '.png':
+                        case '.jpg':
+                        case '.jpeg':
+                        case '.webp': {
+                            texturePaths.push(path);
                             break;
                         }
                         case '.atlas': {
@@ -183,7 +186,16 @@ module.exports = (function () {
                         }
                     }
                 }
-                return `💀 [Skeleton]\n· ${skeletonPath}\n\n🖼 [Texture]\n· ${texturePath}\n\n🗺 [Atlas]\n· ${atlasPath}`;
+                
+                // 构建纹理信息字符串
+                let textureInfo = '';
+                if (texturePaths.length > 0) {
+                    textureInfo = texturePaths.map(path => `· ${path}`).join('\n');
+                } else {
+                    textureInfo = '· (none)';
+                }
+                
+                return `💀 [Skeleton]\n· ${skeletonPath}\n\n🖼 [Textures]\n${textureInfo}\n\n🗺 [Atlas]\n· ${atlasPath}`;
             },
 
             /**
@@ -344,6 +356,15 @@ module.exports = (function () {
             },
 
             /**
+             * 打开开发者工具按钮点击回调
+             */
+            onOpenDevToolsClick() {
+                const { remote } = require('electron');
+                const currentWindow = remote.getCurrentWindow();
+                currentWindow.webContents.openDevTools();
+            },
+
+            /**
              * 复位按钮点击回调
              */
             onRepositionBtnClick() {
@@ -472,7 +493,17 @@ module.exports = (function () {
                 } else {
                     // spine runtime 3.5
                     assetManager.loadText(assets.atlas);
-                    assetManager.loadTexture(assets.png);
+                    // 加载所有纹理文件
+                    if (assets.textures && assets.textures.length > 0) {
+                        // 加载所有texture files
+                        for (let texturePath of assets.textures) {
+                            const textureName = Path.basename(texturePath);
+                            assetManager.loadTexture(textureName);
+                        }
+                    } else {
+                        // 向后兼容，使用单个png文件
+                        assetManager.loadTexture(assets.png);
+                    }
                 }
                 // 是否开启纹理预乘
                 if (Path.basename(assets.png).includes('pma') ||
@@ -805,7 +836,7 @@ module.exports = (function () {
                 // 如果没有指定 pathPrefix 属性，loadTexture 就会无法正常加载
                 // 所以干脆都改为需要指定 pathPrefix 属性
                 const assets = this.assets,
-                    { dir, json, skel, png, atlas } = assets;
+                    { dir, json, skel, png, atlas, textures } = assets;
                 if (!dir) {
                     assets.dir = Path.dirname(json || skel);
                 }
@@ -819,6 +850,11 @@ module.exports = (function () {
                 }
                 assets.atlas = Path.basename(atlas);
                 assets.png = Path.basename(png);
+                
+                // 处理多个纹理文件
+                if (textures && textures.length > 0) {
+                    assets.textures = textures.map(texturePath => Path.basename(texturePath));
+                }
             },
 
             /**
