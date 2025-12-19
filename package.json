@@ -1,0 +1,17 @@
+{
+    "package_version": 2,
+    "version": "1.0.0",
+    "name": "remove-unused-assets",
+    "description": "i18n:remove-unused-assets.description",
+    "main": "./dist/main.js",
+    "devDependencies": {
+        "@types/node": "^16.0.1",
+        "typescript": "^4.3.4"
+    },
+    "author": "Cocos Creator",
+    "editor": ">=3.7.3",
+    "scripts": {
+        "build": "tsc -b",
+        "watch": "tsc -w"
+    }
+}
