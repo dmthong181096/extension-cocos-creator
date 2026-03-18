@@ -254,7 +254,9 @@ module.exports = (function () {
              */
             canvasColor(value) {
                 // 更新画布颜色
-                canvas.style.backgroundColor = value;
+                if (canvas && canvas.style) {
+                    canvas.style.backgroundColor = value;
+                }
                 // 获取 RGB 格式
                 const { r, g, b } = hexToRGB(value);
                 // 保存颜色值
@@ -383,8 +385,8 @@ module.exports = (function () {
                     // RendererUtil.print('warn', translate('noVersion'));
                     // return false;
                     console.warn('Unable to identify Spine version of asset!');
-                    // 默认使用 3.8 的 Runtime
-                    version = "3.8";
+                    // 默认使用 4.2 的 Runtime (Cocos 3.8.x+)
+                    version = "4.2";
                 }
                 // 处理版本号（保留前两个分量）
                 version = version.split('.').slice(0, 2).map(v => parseInt(v)).join('.');
@@ -417,7 +419,8 @@ module.exports = (function () {
                         return data.skeleton.spine;
                     }
                 } else if (extname === '.skel') {
-                    return '3.8';
+                    // Binary skel files often use 4.2 runtime in newer versions of Cocos
+                    return '4.2';
                 }
                 return null;
             },
@@ -668,7 +671,11 @@ module.exports = (function () {
              */
             calculateBounds() {
                 skeleton.setToSetupPose();
-                skeleton.updateWorldTransform();
+                if (spine.version >= '4.2') {
+                    skeleton.updateWorldTransform(spine.Physics.update);
+                } else {
+                    skeleton.updateWorldTransform();
+                }
                 const offset = new spine.Vector2(),
                     size = new spine.Vector2();
                 skeleton.getBounds(offset, size, []);
@@ -721,7 +728,11 @@ module.exports = (function () {
                 
                 this.animationState.apply(skeleton);
                 // 更新骨骼 Transform
-                skeleton.updateWorldTransform();
+                if (spine.version >= '4.2') {
+                    skeleton.updateWorldTransform(spine.Physics.update);
+                } else {
+                    skeleton.updateWorldTransform();
+                }
 
                 // 渲染
                 // 绑定 shader
@@ -971,7 +982,11 @@ module.exports = (function () {
                 this.currentTime = time;
                 this.animationState.tracks[0].trackTime = time;
                 this.animationState.apply(skeleton);
-                skeleton.updateWorldTransform();
+                if (spine.version >= '4.2') {
+                    skeleton.updateWorldTransform(spine.Physics.update);
+                } else {
+                    skeleton.updateWorldTransform();
+                }
             },
 
             /**
@@ -992,6 +1007,9 @@ module.exports = (function () {
              * 布局尺寸变化回调
              */
             onLayoutResize() {
+                if (!layout || !properties) {
+                    return;
+                }
                 const layoutStyle = layout.style,
                     propertiesStyle = properties.style;
                 if (layout.clientWidth >= 800 || layout.clientHeight < 330) {
@@ -1042,10 +1060,12 @@ module.exports = (function () {
             // 主动触发布局尺寸变化
             this.onLayoutResize();
             // 监听布局尺寸变化
-            resizeObserver = new ResizeObserver(entries => {
-                this.onLayoutResize();
-            });
-            resizeObserver.observe(layout);
+            if (layout) {
+                resizeObserver = new ResizeObserver(entries => {
+                    this.onLayoutResize();
+                });
+                resizeObserver.observe(layout);
+            }
         },
 
         /**
