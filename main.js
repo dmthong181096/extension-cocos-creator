@@ -1,22 +1,46 @@
 'use strict';
 
-// STEP 1: Don't load Sharp immediately - only when needed
-let sharp = null;
+const child_process = require('child_process');
+const path = require('path');
 
-function loadSharp() {
-  if (sharp) return sharp;
-  
-  try {
-    Editor.log('[Tool-Optimize] Loading Sharp.js...');
-    sharp = require('sharp');
-    Editor.log('[Tool-Optimize] ✓ Sharp loaded successfully!');
-    Editor.log('[Tool-Optimize] Sharp version:', sharp.versions.sharp);
-    return sharp;
-  } catch (err) {
-    Editor.error('[Tool-Optimize] ✗ Failed to load Sharp:', err.message);
-    Editor.error('[Tool-Optimize] Stack:', err.stack);
-    return null;
-  }
+// Execute sharp-worker.js using the system's Node.js
+function runSharpWorker(args) {
+  return new Promise((resolve, reject) => {
+    const workerPath = path.join(__dirname, 'sharp-worker.js');
+    // Escape arguments for the shell
+    const escapedArgs = args.map(arg => `"${arg.toString().replace(/"/g, '\\"')}"`).join(' ');
+    
+    // Check if node exists
+    child_process.exec(`node "${workerPath}" ${escapedArgs}`, {
+      cwd: __dirname,
+      maxBuffer: 1024 * 1024 * 10 // 10MB buffer just in case
+    }, (error, stdout, stderr) => {
+      if (error) {
+        // Not a node error, probably command failed
+        if (stderr) {
+          Editor.error('[Tool-Optimize] Worker stderr:', stderr);
+        }
+        return reject(new Error(`Failed to execute Node.js: ${error.message}`));
+      }
+
+      try {
+        // We expect stdout to be the JSON response
+        // But there might be other logs. Get the last line that looks like JSON
+        const lines = stdout.trim().split('\n');
+        let jsonStr = lines[lines.length - 1];
+        
+        const result = JSON.parse(jsonStr);
+        if (result.success) {
+          resolve(result);
+        } else {
+          reject(new Error(result.error || 'Unknown worker error'));
+        }
+      } catch (err) {
+        Editor.error('[Tool-Optimize] Failed to parse worker output:', stdout);
+        reject(new Error(`Worker parse error: ${err.message}`));
+      }
+    });
+  });
 }
 
 module.exports = {
@@ -57,20 +81,6 @@ module.exports = {
       Editor.log('[Tool-Optimize] Compression quality:', data.compressionLevel + '%');
       Editor.log('[Tool-Optimize] ========================================');
       
-      // Load Sharp
-      const sharpLib = loadSharp();
-      if (!sharpLib) {
-        Editor.error('[Tool-Optimize] Cannot load Sharp!');
-        Editor.Dialog.messageBox({
-          type: 'error',
-          buttons: ['OK'],
-          title: 'Error',
-          message: 'Failed to load Sharp.js!\n\nPlease check Console for details.',
-          defaultId: 0
-        });
-        return;
-      }
-      
       const { assets, compressionLevel } = data;
       let completed = 0;
       let totalOriginalSize = 0;
@@ -82,8 +92,6 @@ module.exports = {
       // Process each asset sequentially
       const processAsset = async (asset, index) => {
         try {
-          // Editor.log(`[Tool-Optimize] [${index + 1}/${assets.length}] Processing: ${path.basename(asset.path)}`);
-          
           // Send progress - processing
           Editor.Ipc.sendToPanel('tool-optimize', 'tool-optimize:asset-progress', {
             uuid: asset.uuid,
@@ -98,7 +106,6 @@ module.exports = {
           
           // Only process images (texture type)
           if (asset.type !== 'texture') {
-            // Editor.log(`[Tool-Optimize] Skipping non-image: ${asset.type}`);
             totalNewSize += originalSize;
             skippedCount++;
             
@@ -137,36 +144,19 @@ module.exports = {
             return;
           }
           
-          // Create backup
+          // Create backup (Use writeFileSync + readFileSync because old Node doesn't have copyFileSync)
           const backupPath = asset.path + '.backup';
-          fs.copyFileSync(asset.path, backupPath);
+          fs.writeFileSync(backupPath, fs.readFileSync(asset.path));
           
           // Optimize based on file type
           const tmpPath = asset.path + '.tmp';
-          let sharpInstance = sharpLib(asset.path);
           
-          if (ext === '.png') {
-            await sharpInstance
-              .png({ 
-                quality: compressionLevel,
-                compressionLevel: 9,
-                adaptiveFiltering: true
-              })
-              .toFile(tmpPath);
-          } else if (ext === '.jpg' || ext === '.jpeg') {
-            await sharpInstance
-              .jpeg({ 
-                quality: compressionLevel,
-                progressive: true,
-                mozjpeg: true
-              })
-              .toFile(tmpPath);
-          } else if (ext === '.webp') {
-            await sharpInstance
-              .webp({ 
-                quality: compressionLevel
-              })
-              .toFile(tmpPath);
+          // Call sharp worker
+          try {
+            await runSharpWorker(['optimize', asset.path, tmpPath, ext, compressionLevel]);
+          } catch (err) {
+            Editor.error(`[Tool-Optimize] Worker error processing ${asset.path}:`, err);
+            throw err;
           }
           
           // Get new file size from tmp file
@@ -243,7 +233,7 @@ module.exports = {
               if (fs.existsSync(asset.path + '.tmp')) {
                 fs.unlinkSync(asset.path + '.tmp');
               }
-              fs.copyFileSync(backupPath, asset.path);
+              fs.writeFileSync(asset.path, fs.readFileSync(backupPath));
               fs.unlinkSync(backupPath);
               Editor.log(`[Tool-Optimize] Restored backup for: ${path.basename(asset.path)}`);
             } catch (restoreErr) {
@@ -277,43 +267,19 @@ module.exports = {
       Editor.log('[Tool-Optimize] Testing Sharp...');
       Editor.log('[Tool-Optimize] ========================================');
       
-      const sharpLib = loadSharp();
+      Editor.log('[Tool-Optimize] Creating test image via child process...');
       
-      if (!sharpLib) {
-        Editor.Dialog.messageBox({
-          type: 'error',
-          buttons: ['OK'],
-          title: 'Sharp Error',
-          message: 'Failed to load Sharp.js!\n\nCheck Console for details.',
-          defaultId: 0
-        });
-        return;
-      }
-      
-      // Test Sharp with a simple operation
-      try {
-        Editor.log('[Tool-Optimize] Creating test image...');
-        
-        sharpLib({
-          create: {
-            width: 100,
-            height: 100,
-            channels: 4,
-            background: { r: 255, g: 0, b: 0, alpha: 1 }
-          }
-        })
-        .png()
-        .toBuffer()
-        .then(buffer => {
+      runSharpWorker(['test'])
+        .then(result => {
           Editor.log('[Tool-Optimize] ✓ Sharp test successful!');
-          Editor.log('[Tool-Optimize] Generated buffer size:', buffer.length, 'bytes');
+          Editor.log('[Tool-Optimize] Generated buffer size:', result.size, 'bytes');
           Editor.log('[Tool-Optimize] ========================================');
           
           Editor.Dialog.messageBox({
             type: 'info',
             buttons: ['OK'],
             title: 'Sharp Test Success',
-            message: `Sharp.js is working!\n\nVersion: ${sharpLib.versions.sharp}\nTest buffer: ${buffer.length} bytes`,
+            message: `Sharp.js is working via Worker!\n\nVersion: ${result.version}\nTest buffer: ${result.size} bytes`,
             defaultId: 0
           });
         })
@@ -324,22 +290,10 @@ module.exports = {
             type: 'error',
             buttons: ['OK'],
             title: 'Sharp Test Failed',
-            message: `Sharp loaded but test failed!\n\nError: ${err.message}`,
+            message: `Worker test failed!\n\nError: ${err.message}`,
             defaultId: 0
           });
         });
-        
-      } catch (err) {
-        Editor.error('[Tool-Optimize] ✗ Sharp test error:', err);
-        
-        Editor.Dialog.messageBox({
-          type: 'error',
-          buttons: ['OK'],
-          title: 'Sharp Test Error',
-          message: `Error testing Sharp!\n\nError: ${err.message}`,
-          defaultId: 0
-        });
-      }
     }
   },
   
