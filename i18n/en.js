@@ -1,1 +1,1 @@
-"use strict";module.exports={open_panel:"Default Panel",send_to_panel:"Send message to Default Panel",description:"Extension with a panel"};
+"use strict";module.exports={"remove-unused-asset":{"description":"Scan and remove unused assets in your project","open_panel":"Remove Unused Assets"}};

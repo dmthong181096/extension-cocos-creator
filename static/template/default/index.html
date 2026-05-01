@@ -1,3 +1,68 @@
-<div>
-    <h1 id="app"></h1>
+<div class="container">
+    <div class="header">
+        <h1>Remove Unused Assets</h1>
+    </div>
+
+    <div class="drop-zone" id="dropZone">
+        <div class="drop-content">
+            <div class="drop-icon">📂</div>
+            <p>Drag and drop a folder here</p>
+            <p class="drop-hint">Or click to select folder</p>
+        </div>
+        <input type="file" id="folderInput" webkitdirectory directory style="display: none;">
+    </div>
+
+    <div class="selected-folder" id="selectedFolder" style="display: none;">
+        <span>📁</span>
+        <span id="folderPath"></span>
+        <button class="btn-clear" id="clearBtn">×</button>
+    </div>
+
+    <div class="scan-section" id="scanSection" style="display: none;">
+        <button class="btn-scan" id="scanBtn">Scan for Unused Assets</button>
+    </div>
+
+    <div class="loading" id="loading" style="display: none;">
+        <div class="spinner"></div>
+        <p>Scanning assets...</p>
+    </div>
+
+    <div class="results" id="results" style="display: none;">
+        <div class="stats">
+            <div class="stat-item">
+                <span class="stat-label">Total Assets:</span>
+                <span class="stat-value" id="totalAssets">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Unused Assets:</span>
+                <span class="stat-value highlight" id="unusedAssets">0</span>
+            </div>
+            <div class="stat-item">
+                <span class="stat-label">Total Size:</span>
+                <span class="stat-value" id="totalSize">0 KB</span>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button class="btn-select-all" id="selectAllBtn">Select All</button>
+            <button class="btn-deselect-all" id="deselectAllBtn">Deselect All</button>
+            <button class="btn-delete" id="deleteBtn">Delete Selected</button>
+        </div>
+
+        <div class="asset-list-container">
+            <table class="asset-list">
+                <thead>
+                    <tr>
+                        <th class="col-check"><input type="checkbox" id="headerCheckbox"></th>
+                        <th class="col-name">Name</th>
+                        <th class="col-type">Type</th>
+                        <th class="col-size">Size</th>
+                        <th class="col-path">Path</th>
+                    </tr>
+                </thead>
+                <tbody id="assetListBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>

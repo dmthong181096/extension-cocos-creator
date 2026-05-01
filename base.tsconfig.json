@@ -8,12 +8,12 @@
         "inlineSources": true,
         "esModuleInterop": true,
         "skipLibCheck": true,
-        "strict": true,
+        "strict": false,
         "experimentalDecorators": true,
         "forceConsistentCasingInFileNames": true,
         "resolveJsonModule": true,
         "outDir": "./dist",
         "rootDir": "./source",
-        "types": ["node", "@cocos/creator-types/editor"]
+        "types": ["node"]
     }
 }

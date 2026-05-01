@@ -1,5 +1,291 @@
-#app {
-    color: var(--color-normal-contrast-weakest);
-    margin: auto;
-    width: 180px;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+    font-size: 13px;
+    color: #333;
+    background: #1e1e1e;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 16px;
+    gap: 16px;
+}
+
+.header h1 {
+    color: #fff;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.drop-zone {
+    border: 2px dashed #555;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #252526;
+}
+
+.drop-zone:hover,
+.drop-zone.drag-over {
+    border-color: #007acc;
+    background: #2d2d30;
+}
+
+.drop-icon {
+    font-size: 48px;
+    margin-bottom: 12px;
+}
+
+.drop-zone p {
+    color: #ccc;
+    font-size: 14px;
+}
+
+.drop-hint {
+    color: #888;
+    font-size: 12px;
+    margin-top: 8px;
+}
+
+.selected-folder {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: #2d2d30;
+    border-radius: 6px;
+    border: 1px solid #404040;
+}
+
+.selected-folder span:first-child {
+    font-size: 20px;
+}
+
+#folderPath {
+    flex: 1;
+    color: #fff;
+    font-family: monospace;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.btn-clear {
+    background: none;
+    border: none;
+    color: #888;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0 8px;
+    line-height: 1;
+}
+
+.btn-clear:hover {
+    color: #fff;
+}
+
+.scan-section {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-scan {
+    padding: 10px 32px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    background: #007acc;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.btn-scan:hover {
+    background: #005a9e;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    gap: 16px;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid #333;
+    border-top-color: #007acc;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.loading p {
+    color: #ccc;
+}
+
+.results {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.stats {
+    display: flex;
+    gap: 24px;
+    padding: 16px;
+    background: #252526;
+    border-radius: 6px;
+    border: 1px solid #333;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-label {
+    color: #888;
+}
+
+.stat-value {
+    color: #fff;
+    font-weight: 600;
+    font-size: 16px;
+}
+
+.stat-value.highlight {
+    color: #ff9900;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.actions button {
+    padding: 8px 16px;
+    font-size: 13px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-select-all {
+    background: #3c3c3c;
+    color: #fff;
+}
+
+.btn-select-all:hover {
+    background: #4c4c4c;
+}
+
+.btn-deselect-all {
+    background: #3c3c3c;
+    color: #fff;
+}
+
+.btn-deselect-all:hover {
+    background: #4c4c4c;
+}
+
+.btn-delete {
+    background: #d32f2f;
+    color: #fff;
+    font-weight: 500;
+}
+
+.btn-delete:hover {
+    background: #b71c1c;
+}
+
+.btn-delete:disabled {
+    background: #555;
+    cursor: not-allowed;
+}
+
+.asset-list-container {
+    flex: 1;
+    overflow: auto;
+    border: 1px solid #333;
+    border-radius: 6px;
+    background: #1e1e1e;
+}
+
+.asset-list {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.asset-list th,
+.asset-list td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid #333;
+}
+
+.asset-list th {
+    background: #252526;
+    color: #888;
+    font-weight: 500;
+    font-size: 12px;
+    text-transform: uppercase;
+    position: sticky;
+    top: 0;
+}
+
+.asset-list tbody tr:hover {
+    background: #2a2d2e;
+}
+
+.col-check {
+    width: 40px;
+}
+
+.col-name {
+    color: #fff;
+}
+
+.col-type {
+    color: #4ec9b0;
+}
+
+.col-size {
+    color: #ce9178;
+    width: 100px;
+}
+
+.col-path {
+    color: #888;
+    font-family: monospace;
+    font-size: 11px;
+}
+
+.asset-list input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
 }
